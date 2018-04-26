@@ -8,6 +8,8 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -20,13 +22,15 @@ import javax.swing.JPanel;
 
 import art.controller.ArtController;
 
-public class DrawingCanvas extends JPanel 
+public class ShapeCanvas extends JPanel implements MouseMotionListener
 {
 	private ArrayList<Polygon> triangleList;
 	private ArrayList<Polygon> polygonList;
 	private ArrayList<Ellipse2D> ellipseList;
 	private ArrayList<Rectangle> rectangleList;
 	private ArtController app;
+	private int previousX;
+	private int previousY;
 	
 	private BufferedImage canvasImage;
 	
@@ -34,6 +38,9 @@ public class DrawingCanvas extends JPanel
 	{
 		super();
 		this.app = app;
+		
+		previousX = Integer.MIN_VALUE;
+		previousY = Integer.MIN_VALUE;
 		triangleList = new ArrayList<Polygon>();
 		polygonList = new ArrayList<Polygon>();
 		ellipseList = new ArrayList<Polygon>();
@@ -73,22 +80,76 @@ public class DrawingCanvas extends JPanel
 	
 	public void clear()
 	{
-		
+		canvasImage = new BufferedImage(600, 600, BufferedImage.TYPE_INT_ARGB);
 		
 	}
 	
 	public void changeBackground()
 	{
+		Graphics2D current = canvasImage.createGraphics();
+		current.setPaint(randomColor());
+		current.fillRect(0,  0, canvasImage.getWidth(), canvasImage.getHeight());
+		updateImage();
+	}
+	
+	public void drawOnCanvas(int xPosition, int yPosition, int LineWidth)
+	{
+		Graphics2D current = canvasImage.createGraphics();
+		current.setPaint(Color.DARK_GRAY);
+		current.setStroke(new BasicStroke(LineWidth));
 		
+		if (previousX == Integer.MIN_VALUE)
+		{
+			current.drawLine(xPosition, yPosition, xPosition, yPosition);
+		}
+		else
+		{
+			current.drawLine(previousX, previousY, xPosition, yPosition);
+			
+		}
+		
+		previousX = xPosition;
+		previousY = yPosition;
+		updateImage();
+		
+		
+		
+	}
+	
+	public void resetLine()
+	{
+		previousX = Integer.MIN_VALUE;
+		previousY = Integer.MIN_VALUE;
 	}
 	
 	public void save()
 	{
+		try
+		{
+			JFileChooser saveDialog = new JFileChooser();
+			saveDialog.showSaveDialog(app.getFrame());
+			String savePath = saveDialog.getSelectedFile().getPath();
+			ImageIO.write(canvasImage, "PNG", new File(savePath));
+		}
+		catch (IOException error)
+		{
+			app.handleErrors(error);
+		}
+		catch (NullPointerException badChoice)
+		{
+			app.handleError(badChoice);
+		}
 		
 	}
 	
 	public Color randomColor()
 	{
+		int red = (int)(Math.random() * 256);
+		int green = (int)(Math.random() * 256);
+		int blue = (int)(Math.random() * 256);
+		int alpha = (int)(Math.random() * 256);
+		
+		return new Color(red, green, blue, alpha);
 		
 	}
 	
@@ -103,5 +164,21 @@ public class DrawingCanvas extends JPanel
 		graphics.drawImage(canvasImage, 0, 0, null);
 		
 	}
+
+	@Override
+	public void mouseDragged(MouseEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e)
+	{
+		changeBackground();
+		
+	}
+	
+	
 
 }

@@ -7,6 +7,7 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.util.Hashtable;
 
@@ -205,6 +206,8 @@ public class ArtPanel extends JPanel
 			ellipse.setFrame(cornerX, cornerY, width, height);
 			
 		}
+		
+		return ellipse;
 	}
 	
 	private void setupListeners()
@@ -276,6 +279,60 @@ public class ArtPanel extends JPanel
 			}
 			
 				});
+		
+		canvas.addMouseMotionListener(new MouseMotionListener()
+		{
+			@Override
+			public void mouseDragged(MouseEvent drag)
+			{
+				int x = drag.getX();
+				int y = drag.getY();
+				System.out.println("X is at " + x + " Y is at " + y);
+				canvas.drawOnCanvas(x,  y, currentEdgeCount);
+				
+				
+			}
+			
+			@Override
+			public void mouseMoved(MouseEvent e)
+			{
+				
+			}
+			
+			
+		});
+		
+		canvas.addMouseListener(new MouseListener()
+		{
+			public void mouseClicked(MouseEvent e)
+			{
+				
+			}
+			
+			public void mousePressed(MouseEvent e)
+			{
+				
+			}
+			
+			public void mouseReleased(MouseEvent e)
+			{
+				canvas.resetLine();
+			}
+			
+			public void mouseEntered(MouseEvent e)
+			{
+				
+			}
+			
+			public void mouseExited(MouseEvent e)
+			{
+				canvas.resetLine();
+			}
+			
+			
+			
+		});
+		
 		
 	}
 	
