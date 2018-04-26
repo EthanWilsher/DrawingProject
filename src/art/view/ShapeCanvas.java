@@ -43,7 +43,7 @@ public class ShapeCanvas extends JPanel implements MouseMotionListener
 		previousY = Integer.MIN_VALUE;
 		triangleList = new ArrayList<Polygon>();
 		polygonList = new ArrayList<Polygon>();
-		ellipseList = new ArrayList<Polygon>();
+		ellipseList = new ArrayList<Ellipse2D>();
 		rectangleList = new ArrayList<Rectangle>();
 		
 		canvasImage = new BufferedImage(600, 600, BufferedImage.TYPE_INT_ARGB);
@@ -51,6 +51,7 @@ public class ShapeCanvas extends JPanel implements MouseMotionListener
 		this.setPreferredSize(new Dimension(600, 600));
 		this.setMaximumSize(getPreferredSize());
 	}
+	
 	
 	public void addShape(Shape current)
 	{
@@ -155,7 +156,40 @@ public class ShapeCanvas extends JPanel implements MouseMotionListener
 	
 	private void updateImage()
 	{
+		Graphics2D currentGraphics = (Graphics2D) canvasImage.getGraphics();
 		
+		for (Ellipse2D current : ellipseList)
+		{
+			currentGraphics.setColor(randomColor());
+			currentGraphics.setStroke(new BasicStroke(2));
+			currentGraphics.fill(current);
+			currentGraphics.setColor(randomColor());
+			currentGraphics.draw(current);
+			
+		}
+		
+		for (Polygon currentTriangle : triangleList)
+		{
+			currentGraphics.setColor(randomColor());
+			currentGraphics.fill(currentTriangle);
+		}
+		
+		for (Polygon currentPolygon : polygonList)
+		{
+			currentGraphics.setColor(randomColor());
+			currentGraphics.setStroke(new BasicStroke(4));
+			currentGraphics.draw(currentPolygon);
+			
+		}
+		
+		for (Rectangle currentRectangle : rectangleList)
+		{
+			currentGraphics.setColor(randomColor());
+			currentGraphics.fill(currentRectangle);
+		}
+		
+		currentGraphics.dispose();
+		repaint();
 	}
 	
 	protected void paintComponent(Graphics graphics)
